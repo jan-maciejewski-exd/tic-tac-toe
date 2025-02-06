@@ -23,19 +23,48 @@ const gameboard = [
 ];
 
 const Player = function(mark) {
-    const mark = mark;
     let score = 0;
     
-    playerPick = function(pick) {
+    return {getMark: function() {
+        return mark;
+    },
+
+    getScore: function() {
+        return score;
+    },
+
+    addScore: function() {
+        score++;
+    },
+    
+    playerPick: function(pick) {
         if (gameboard[pick] == "") {
-            gameboard.pick = Player.mark;
+            // The entire logic of this is wrong because it's based on the previous version, where I had each square named and the pick actually corresponded to the gameboard value. Now it needs to be gameboard[row][col]
+            gameboard[pick] = Player.getMark();
         };
-    };
+    },
+}   
 };
 
-let x = new Player(x);
-let o = new Player(o);
+let x = new Player("x");
+let o = new Player("o");
 let nowMoving = x;
+
+const gamePlay = function(param) {
+    console.log(nowMoving.getMark());
+    nowMoving.playerPick(param);
+    syncBoard();
+    checkWin();
+    changePlayer();
+}
+
+const handleClick = function() {
+    board.addEventListener("click", function (e) {
+        console.log(e.target.id)
+        let choice = e.target.id;
+        gamePlay(choice);
+    });
+}();
 
 const checkWin = function() {
         
@@ -67,16 +96,21 @@ const checkWin = function() {
         gameboard[2][0] !== ""
     ) return gameboard[2][0];
 
+    
+    // Check for empty squares
+    for (let row of gameboard) {
+        if (row.includes("")) {
+            continue
+        };
+        
+        // Returns draw only when all squares are filled and no winner has emerged - not ideal, since there will be combinations where 
+        // the game is drawn since no victor can be crowned despite empty squares remaining, but I don't feel like solving it right now, so this must do.
+        return "Draw";
+    };
 }
 
-for (let row of gameboard) {
-    if (row.includes("")) {
-        return null
-};
 
-return "Draw";
-};
-
+// Alternate players
 const changePlayer = function() {
     if (nowMoving === x) {
         nowMoving = o;
@@ -93,8 +127,8 @@ const syncBoard = function() {
     for (let row = 0; row < 2; row++) {
         for (let col = 0; col < 2; col++) {
             let squareClass = `${String.fromCharCode(97 + row)}${col + 1}`
-            let squareElement = document.querySelector(`.${squareClass}`);
+            let squareElement = document.querySelector(`#${squareClass}`);
             squareElement.innerHTML = gameboard[row][col];
-        }
+        };
     }; 
 };
