@@ -1,18 +1,3 @@
-// jak teraz programatycznie najlepiej zrobić planszę do tic tac toe
-// możnaby zrobić array, z key value pair, 9 par, tylko potem trzeba sprawdzać czy pola obok siebie mają 3 x z rzędu
-// let board = []
-
-// makeBoard: new function() {
-//     for (let i = 0; i < 8; i++) {
-//         board.push(i);
-//     };
-// }();
-
-// chodzi o to że zrobię sobie grid na stronie i przypiszę każdej komórce grida klasę z cyfrą opisującą pozycję
-// następnie funkcja określająca kto jest na ruchu
-// mam gameboard jako obiekt UI, ale nie mam jak określić status planszy
-
-
 const board = document.querySelector(".board");
 const resetbtn = document.querySelector(".reset-btn");
 const now_moving_banner = document.querySelector(".now-moving");
