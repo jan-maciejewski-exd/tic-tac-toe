@@ -27,7 +27,7 @@
   .board {
     background-color: aliceblue;
     border: 20px solid rgb(120, 4, 4);
-    width: 90vmin;
+    width: 70vmin;
   }
   
   .row {
@@ -42,6 +42,6 @@
     display: flex;                
     align-items: center;          
     justify-content: center;      
-    font-size: 7rem;              
+    font-size: 6rem;              
   }
   
