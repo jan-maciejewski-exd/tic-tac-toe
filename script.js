@@ -14,18 +14,33 @@
 
 
 const board = document.querySelector(".board");
-const row_UI = board.querySelectorAll(".row")
+const resetbtn = document.querySelector(".reset-btn");
+const now_moving_banner = document.querySelector(".now-moving");
 
-const gameboard = [
-    ["","",""],
-    ["","",""],
-    ["","",""]
+let gameboard = [
+    [" "," "," "],
+    [" "," "," "],
+    [" "," "," "]
 ];
+
+const board_UI = {
+    a1: {row: 0, col: 0},
+    a2: {row: 0, col: 1},
+    a3: {row: 0, col: 2},
+    b1: {row: 1, col: 0},
+    b2: {row: 1, col: 1},
+    b3: {row: 1, col: 2},
+    c1: {row: 2, col: 0},
+    c2: {row: 2, col: 1},
+    c3: {row: 2, col: 2},
+};
 
 const Player = function(mark) {
     let score = 0;
     
-    return {getMark: function() {
+    return {
+    
+    getMark: function() {
         return mark;
     },
 
@@ -38,9 +53,10 @@ const Player = function(mark) {
     },
     
     playerPick: function(pick) {
-        if (gameboard[pick] == "") {
-            // The entire logic of this is wrong because it's based on the previous version, where I had each square named and the pick actually corresponded to the gameboard value. Now it needs to be gameboard[row][col]
-            gameboard[pick] = Player.getMark();
+        coord = board_UI[pick];
+
+        if (gameboard[coord.row][coord.col] == " ") {
+            gameboard[coord.row][coord.col] = this.getMark();
         };
     },
 }   
@@ -49,6 +65,7 @@ const Player = function(mark) {
 let x = new Player("x");
 let o = new Player("o");
 let nowMoving = x;
+now_moving_banner.innerHTML = `Now moving: ${nowMoving.getMark()}`;
 
 const gamePlay = function(param) {
     console.log(nowMoving.getMark());
@@ -63,17 +80,32 @@ const handleClick = function() {
         console.log(e.target.id)
         let choice = e.target.id;
         gamePlay(choice);
+        console.log(gameboard)
     });
 }();
 
+
+resetbtn.addEventListener("click", () => {
+    gameboard = [
+        [" "," "," "],
+        [" "," "," "],
+        [" "," "," "]
+    ];
+    syncBoard();
+});
+
 const checkWin = function() {
+
+    const announceWin = function(winner) {
+        alert(winner + ' has won')
+    };
         
     //Check rows for win
     for (let row of gameboard) {
         if (row[0] === row[1] && 
             row[0] === row[2] && 
-            row[0] !== "") {
-            return row[0];
+            row[0] !== " ") {
+            return announceWin(row[0]);
         };
     };
         
@@ -81,33 +113,36 @@ const checkWin = function() {
     for (let col=0; col<3; col++) {
         if (gameboard[0][col] === gameboard[1][col] &&
             gameboard[0][col] === gameboard[2][col] &&
-            gameboard[0][col] !== ""
-        ) return gameboard[0][col];
+            gameboard[0][col] !== " "
+        ) return announceWin(gameboard[0][col]);
     };
 
     // Check diagonals for a win
     if (gameboard[0][0] === gameboard[1][1] &&
         gameboard[0][0] === gameboard[2][2] &&
-        gameboard[0][0] !== ""
-    ) return gameboard[0][0];
+        gameboard[0][0] !== " "
+    ) return announceWin(gameboard[0][0]);
 
     if (gameboard[2][0] === gameboard[1][1] &&
         gameboard[2][0] === gameboard[0][2] &&
-        gameboard[2][0] !== ""
-    ) return gameboard[2][0];
+        gameboard[2][0] !== " "
+    ) return announceWin(gameboard[2][0]);
 
     
-    // Check for empty squares
+    // Check for empty squares to determine draw if there aren't any
+    let temp = 0
     for (let row of gameboard) {
-        if (row.includes("")) {
-            continue
-        };
+        if (row.includes(" ")) {
+            temp++
+        };    
+    }
+    if (temp === 0) {
+        return alert("Draw")
+    }
         
-        // Returns draw only when all squares are filled and no winner has emerged - not ideal, since there will be combinations where 
-        // the game is drawn since no victor can be crowned despite empty squares remaining, but I don't feel like solving it right now, so this must do.
-        return "Draw";
+ // Returns draw only when all squares are filled and no winner has emerged - not ideal, since there will be combinations where 
+ // the game is drawn since no victor can be crowned despite empty squares remaining, but I don't feel like solving it right now, so this must do.
     };
-}
 
 
 // Alternate players
@@ -116,18 +151,18 @@ const changePlayer = function() {
         nowMoving = o;
     } else {
         nowMoving = x;
-    }
+    };
+    now_moving_banner.innerHTML = `Now moving: ${nowMoving.getMark()}`;
 };
 
-squareClick: new function() {
-
-}
-
 const syncBoard = function() {
-    for (let row = 0; row < 2; row++) {
-        for (let col = 0; col < 2; col++) {
-            let squareClass = `${String.fromCharCode(97 + row)}${col + 1}`
-            let squareElement = document.querySelector(`#${squareClass}`);
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+
+            //Take the row and column number and associate correct ACII values into a single string
+
+            const squareClass = `${String.fromCharCode(97 + row)}${col + 1}`
+            const squareElement = document.querySelector(`#${squareClass}`);
             squareElement.innerHTML = gameboard[row][col];
         };
     }; 
